@@ -41,26 +41,21 @@
 
 **前置要求：**
 
-* Windows OS & macOS（无法在 Linux 上直接编译）。
+* Windows & macOS & Linux。
 * C++ 编译器（如 MinGW, MSVC 等）。
 
-**使用 g++ 编译：**
+**使用Makefile编译**
 请确保所有源文件（`main.cpp`, `game.cpp`, `cgt_windows.cpp`/`cgt_apple.cpp`, `cgt.h`, `game.h`） 和头文件在同一目录下。
 
 ```bash
-g++ main.cpp game.cpp cgt_windows.cpp -o minesweeper.exe -static
-
+make
 ```
+自动读取Makefile中的编译指令，生成可执行文件 `minesweeper.exe`。
 
-**运行游戏：**
-直接运行生成的 exe 文件即可。
-
-```bash
-./minesweeper.exe
-
-```
-
-> **注意：** 代码会自动尝试禁用控制台的“快速编辑模式”以确保鼠标点击生效。如果点击无反应，请检查终端设置。
+> **注意：** 
+> - 代码会自动尝试禁用控制台的“快速编辑模式”以确保鼠标点击生效。如果点击无反应，请检查终端设置。
+> - 如果出现乱码，请切换编码格式。Linux和macOS：UTF-8；Windows：国标编码。
+               
 
 ### 🚀 后续计划
 
@@ -71,7 +66,8 @@ g++ main.cpp game.cpp cgt_windows.cpp -o minesweeper.exe -static
 * [ ] **首点击保护机制**：实现玩家第一次点击时百分之百不是地雷。
 * [ ] **首点击开阔区保护**：实现玩家第一次点击时，不仅该点不是雷，且周围 8 格也均无地雷（确保开局即有一个空白区域）。
 * [ ] **自定义难度设置**：允许用户根据个人喜好自定义网格大小（行与列）及地雷总数。
-* [ ] **计时器功能**：实时记录游戏耗时，增加挑战性。
+* [ ] **Linux 支持**：移植到 Linux 平台，实现跨平台兼容。
+* [x] **计时器功能**：实时记录游戏耗时，增加挑战性。
 
 ---
 
@@ -115,22 +111,17 @@ The game relies on mouse interaction. Ensure your console window is active.
 * Windows OS & macOS.
 * A C++ Compiler (MinGW, MSVC, etc.).
 
-**Compiling with g++:**
+**Compiling with Makefile:**
 Ensure all files (`main.cpp`, `game.cpp`, `cgt_windows.cpp`/`cgt_apple.cpp`, `cgt.h`, `game.h`) are in the same directory.
 
 ```bash
-g++ main.cpp game.cpp cgt_windows.cpp -o minesweeper.exe -static
-
+make
 ```
+The Makefile will automatically read the compilation instructions and generate an executable file `minesweeper.exe`.
 
-**Running:**
-
-```bash
-./minesweeper.exe
-
-```
-
-> **Note:** Do not use "Quick Edit Mode" in your terminal if possible, although the code attempts to disable it automatically to prevent mouse input conflicts.
+> **Note:** 
+- Do not use "Quick Edit Mode" in your terminal if possible, although the code attempts to disable it automatically to prevent mouse input conflicts.
+- If you encounter garbled text, please switch the encoding format. Linux and macOS: UTF-8; Windows: GBK.
 
 ### 🚀 Future Plans
 
@@ -141,7 +132,8 @@ To further enhance the gaming experience and code quality, the following feature
 * [ ] **First-Click Protection**: Ensure that the user's first click is guaranteed not to be a mine.
 * [ ] **First-Click Safe Zone**: Guarantee that the first click and its 8 surrounding neighbors are all mine-free, ensuring an open starting area.
 * [ ] **Custom Difficulty**: Allow users to customize the grid size (rows and columns) and the total number of mines according to their preference.
-* [ ] **Timer Function**: Real-time recording of game duration to add a competitive element.
+* [ ] **Linux Support**: Port the game to Linux, ensuring cross-platform compatibility.
+* [x] **Timer Function**: Real-time recording of game duration to add a competitive element. 
 
 ---
 
@@ -156,5 +148,5 @@ To further enhance the gaming experience and code quality, the following feature
 ### 📜 Author & Credits
 
 * **Author:** Main logic by *GZQ* from *Shanghai Jiao Tong University*.
-* **CGT Library:** Originally by *gty* and adapted for macOS by *JYQ* with Gemini, learnt from *Shen Jian at Tongji University*.
+* **CGT Library:** Originally by *gty*, macOS adapted by *JYQ* with Gemini, Linux adapted by *GZQ* with Gemini, learnt from *Shen Jian at Tongji University*.
 

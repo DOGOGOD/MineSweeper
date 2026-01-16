@@ -376,11 +376,21 @@ void ProcessGameLoop(int* userMine, const char** Mine_lines, const char* titleSt
     int lastC = -1;
     int flag = 0;
 
+    //记录游戏开始的时间戳
+    time_t startTime = time(nullptr);
+
     while (true) {
         cgt_gotoxy(0, 0);
         cgt_print_str(titleStr, 1, 1, COLOR_WHITE, COLOR_BLACK);
         cgt_print_int(mineCount);
-        cgt_print_str("        ");
+        cgt_print_str("  "); // 清除雷数后面可能残留的字符
+
+        // 计算并显示已用时间
+        // time(nullptr) 获取当前时间戳，减去开始时间即为经过的秒数
+        int elapsed = (int)(time(nullptr) - startTime);
+        cgt_print_str("用时 : ", -1, -1, COLOR_WHITE, COLOR_BLACK);
+        cgt_print_int(elapsed, -1, -1, COLOR_LIGHT_CYAN, COLOR_BLACK); // 使用青色高亮时间
+        cgt_print_str(" 秒    "); // 补空格防止数字变短时残留
 
         if (!cgt_has_mouse()) {
             cgt_msleep(50);
@@ -482,7 +492,12 @@ void ProcessGameLoop(int* userMine, const char** Mine_lines, const char* titleSt
         }
 
         if (flag == winTarget){
-            cgt_print_str("游戏结束！你成功清除所有雷！按任意键退出。", 1, 2, COLOR_GREEN, COLOR_BLACK);
+            // [可选优化] 胜利时显示最终用时
+            int finalTime = (int)(time(nullptr) - startTime);
+            cgt_print_str("游戏结束！你成功清除所有雷！最终用时: ", 1, 2, COLOR_GREEN, COLOR_BLACK);
+            cgt_print_int(finalTime, -1, -1, COLOR_LIGHT_CYAN, COLOR_BLACK);
+            cgt_print_str(" 秒。按任意键退出。");
+            
             wait_for_enter();
             cleanupGame();
             return;
