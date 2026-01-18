@@ -41,7 +41,7 @@
 
 **前置要求：**
 
-* Windows & macOS & Linux。
+* Windows or macOS or Linux。
 * C++ 编译器（如 GCC, Clang 等）。
 
 **使用Makefile编译**
@@ -108,7 +108,7 @@ The game relies on mouse interaction. Ensure your console window is active.
 
 **Prerequisites:**
 
-* Windows OS & macOS.
+* Windows or macOS or Linux.
 * A C++ Compiler (GCC, Clang, etc.).
 
 **Compiling with Makefile:**
