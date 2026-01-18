@@ -42,7 +42,7 @@
 **前置要求：**
 
 * Windows & macOS & Linux。
-* C++ 编译器（如 MinGW, MSVC 等）。
+* C++ 编译器（如 GCC, Clang 等）。
 
 **使用Makefile编译**
 请确保所有源文件（`main.cpp`, `game.cpp`, `cgt_windows.cpp`/`cgt_apple.cpp`, `cgt.h`, `game.h`） 和头文件在同一目录下。
@@ -66,7 +66,7 @@ make
 * [ ] **首点击保护机制**：实现玩家第一次点击时百分之百不是地雷。
 * [ ] **首点击开阔区保护**：实现玩家第一次点击时，不仅该点不是雷，且周围 8 格也均无地雷（确保开局即有一个空白区域）。
 * [ ] **自定义难度设置**：允许用户根据个人喜好自定义网格大小（行与列）及地雷总数。
-* [ ] **Linux 支持**：移植到 Linux 平台，实现跨平台兼容。
+* [x] **Linux 支持**：移植到 Linux 平台，实现跨平台兼容。
 * [x] **计时器功能**：实时记录游戏耗时，增加挑战性。
 
 ---
@@ -109,7 +109,7 @@ The game relies on mouse interaction. Ensure your console window is active.
 **Prerequisites:**
 
 * Windows OS & macOS.
-* A C++ Compiler (MinGW, MSVC, etc.).
+* A C++ Compiler (GCC, Clang, etc.).
 
 **Compiling with Makefile:**
 Ensure all files (`main.cpp`, `game.cpp`, `cgt_windows.cpp`/`cgt_apple.cpp`, `cgt.h`, `game.h`) are in the same directory.
@@ -132,7 +132,7 @@ To further enhance the gaming experience and code quality, the following feature
 * [ ] **First-Click Protection**: Ensure that the user's first click is guaranteed not to be a mine.
 * [ ] **First-Click Safe Zone**: Guarantee that the first click and its 8 surrounding neighbors are all mine-free, ensuring an open starting area.
 * [ ] **Custom Difficulty**: Allow users to customize the grid size (rows and columns) and the total number of mines according to their preference.
-* [ ] **Linux Support**: Port the game to Linux, ensuring cross-platform compatibility.
+* [x] **Linux Support**: Port the game to Linux, ensuring cross-platform compatibility.
 * [x] **Timer Function**: Real-time recording of game duration to add a competitive element. 
 
 ---
