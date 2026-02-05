@@ -1,5 +1,8 @@
-SRCS := $(wildcard *.cpp) $(wildcard */*.cpp)
+TARGET := minesweeper
+SRCS := main.cpp $(wildcard src/*.cpp)
+CXX := g++
+CXXFLAGS := -Wall -std=c++14 -Iinclude
 
 run: $(SRCS)
-	g++ -Wall -std=c++14 -o minesweeper $(SRCS)
-	./minesweeper
+	$(CXX) $(CXXFLAGS) -o $(TARGET) $(SRCS)
+	./$(TARGET)
