@@ -94,26 +94,10 @@ void generateMines(int rows, int cols, const int mineCount, int** mine) {
 
 // ================= 游戏状态管理 =================
 
-int rows = 0;
-int cols = 0;
-int mineCount = 0;
+extern int rows;
+extern int cols;
+extern int mineCount;
 int** mine = NULL;
-
-void Mode(int mode) {
-    if (mode == 1) {
-        rows = 6;
-        cols = 6;
-        mineCount = 6;
-    }else if(mode == 2) {
-        rows = 9;
-        cols = 16;
-        mineCount = 20;
-    }else if(mode == 3) {
-        rows = 12;
-        cols = 30;
-        mineCount = 80;
-    }
-}
 
 void initializeGame() {
     mine = new int*[rows];
@@ -133,6 +117,26 @@ void cleanupGame() {
     }
     delete[] mine;
     mine = NULL;
+}
+
+char** CreateMineLines(int rows, int cols) {
+    char** Mine_lines = new char*[3 * rows + 1];
+    for (int i = 0; i < 3 * rows + 1; i++) {
+        Mine_lines[i] = new char[4 * cols + 2];
+        for (int j = 0; j < 4 * cols + 1; j++) {
+            if (i % 3 == 0) {
+                Mine_lines[i][j] = ' ';
+            } else {
+                if (j % 4 == 0) {
+                    Mine_lines[i][j] = ' ';
+                } else {
+                    Mine_lines[i][j] = '*';
+                }
+            }
+        }
+        Mine_lines[i][4 * cols + 1] = '\0';
+    }
+    return Mine_lines;
 }
 
 // ================= 游戏核心逻辑 (展开、高亮、双击) =================
@@ -236,7 +240,7 @@ bool TryChord(int x, int y, int* userMine) {
     return false;
 }
 
-void UpdateHover(int x, int y, int& lastR, int& lastC, int** internalMine, int* userMine, int rows, int cols, const char** Mine_lines) {
+void UpdateHover(int x, int y, int& lastR, int& lastC, int** internalMine, int* userMine, int rows, int cols, char** Mine_lines) {
     if (x < 3 || x > 3 + cols * 4 || y < 3 || y > 3 + rows * 3) {
         if (lastR != -1) {
             if (internalMine[lastR][lastC] >= 0) {
@@ -342,7 +346,7 @@ void UpdateHover(int x, int y, int& lastR, int& lastC, int** internalMine, int* 
 /**
  * 绘制棋盘背景
  */
-void DrawBoard(const char** Mine_lines, int nlines) {
+void DrawBoard(char** Mine_lines, int nlines) {
     const long offset_x = 3;
     const long offset_y = 3;
 
@@ -365,7 +369,7 @@ void DrawBoard(const char** Mine_lines, int nlines) {
  * titleStr: 标题文字
  * winTarget: 胜利所需的插旗数 (即初始雷数)
  */
-void ProcessGameLoop(int* userMine, const char** Mine_lines, const char* titleStr, int winTarget) {
+void ProcessGameLoop(int* userMine, char** Mine_lines, const char* titleStr, int winTarget) {
     // 清空鼠标缓冲
     while (cgt_has_mouse()) {
         int x, y, button, event;
@@ -492,7 +496,7 @@ void ProcessGameLoop(int* userMine, const char** Mine_lines, const char* titleSt
         }
 
         if (flag == winTarget){
-            // [可选优化] 胜利时显示最终用时
+            //胜利时显示最终用时
             int finalTime = (int)(time(nullptr) - startTime);
             cgt_print_str("游戏结束！你成功清除所有雷！最终用时: ", 1, 2, COLOR_GREEN, COLOR_BLACK);
             cgt_print_int(finalTime, -1, -1, COLOR_LIGHT_CYAN, COLOR_BLACK);
@@ -507,120 +511,24 @@ void ProcessGameLoop(int* userMine, const char** Mine_lines, const char* titleSt
 
 // ================= 主入口函数 =================
 
-void Game(int mode) {
-    Mode(mode);
+void Game() {
     initializeGame();
     cgt_clear_screen();
-
-    // 根据模式定义不同的用户状态数组和字符画
-    // 使用局部数组以保持原始逻辑的内存分配方式，但统一传递指针
     
-    if (mode == 1) {
-        int Mine[6][6] = {0};
-        const char* Mine_lines[] = {
-            "                         ",
-            " *** *** *** *** *** *** ",
-            " *** *** *** *** *** *** ",
-            "                         ",
-            " *** *** *** *** *** *** ",
-            " *** *** *** *** *** *** ",
-            "                         ",
-            " *** *** *** *** *** *** ",
-            " *** *** *** *** *** *** ",
-            "                         ",
-            " *** *** *** *** *** *** ",
-            " *** *** *** *** *** *** ",
-            "                         ",
-            " *** *** *** *** *** *** ",
-            " *** *** *** *** *** *** ",
-            "                         ",
-            " *** *** *** *** *** *** ",
-            " *** *** *** *** *** *** ",
-            "                         ",
-        };
-        long nlines = sizeof(Mine_lines) / sizeof(Mine_lines[0]);
-        DrawBoard(Mine_lines, nlines);
-        ProcessGameLoop((int*)Mine, Mine_lines, "扫雷 : 6x6 , 雷数 : 6 , 剩余 : ", 6);
-    }
-    else if (mode == 2) {
-        int Mine[9][16] = {0};
-        const char* Mine_lines[] = {
-            "                                                                 ",
-            " *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** ",
-            " *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** ",
-            "                                                                 ",
-            " *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** ",
-            " *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** ",
-            "                                                                 ",
-            " *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** ",
-            " *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** ",
-            "                                                                 ",
-            " *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** ",
-            " *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** ",
-            "                                                                 ",
-            " *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** ",
-            " *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** ",
-            "                                                                 ",
-            " *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** ",
-            " *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** ",
-            "                                                                 ",
-            " *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** ",
-            " *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** ",
-            "                                                                 ",
-            " *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** ",
-            " *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** ",
-            "                                                                 ",
-            " *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** ",
-            " *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** ",
-            "                                                                 ",
-        };
-        long nlines = sizeof(Mine_lines) / sizeof(Mine_lines[0]);
-        DrawBoard(Mine_lines, nlines);
-        ProcessGameLoop((int*)Mine, Mine_lines, "扫雷 : 9x16 , 雷数 : 20 , 剩余 : ", 20);
-    }
-    else if (mode == 3) {
-        int Mine[12][30] = {0};
-        const char* Mine_lines[] = {
-            "                                                                                                                         ",
-            " *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** ",
-            " *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** ",
-            "                                                                                                                         ",
-            " *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** ",
-            " *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** ",
-            "                                                                                                                         ",
-            " *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** ",
-            " *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** ",
-            "                                                                                                                         ",
-            " *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** ",
-            " *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** ",
-            "                                                                                                                         ",
-            " *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** ",
-            " *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** ",
-            "                                                                                                                         ",
-            " *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** ",
-            " *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** ",
-            "                                                                                                                         ",
-            " *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** ",
-            " *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** ",
-            "                                                                                                                         ",
-            " *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** ",
-            " *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** ",
-            "                                                                                                                         ",
-            " *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** ",
-            " *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** ",
-            "                                                                                                                         ",
-            " *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** ",
-            " *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** ",
-            "                                                                                                                         ",
-            " *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** ",
-            " *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** ",
-            "                                                                                                                         ",
-            " *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** ",
-            " *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** ",
-            "                                                                                                                         ",
-        };
-        long nlines = sizeof(Mine_lines) / sizeof(Mine_lines[0]);
-        DrawBoard(Mine_lines, nlines);
-        ProcessGameLoop((int*)Mine, Mine_lines, "扫雷 : 12x30 , 雷数 : 80 , 剩余 : ", 80);
-    }
+    char** Mine_lines = CreateMineLines(rows, cols);
+    long nlines = 3 * rows + 1;
+    DrawBoard(Mine_lines, nlines);
+
+    
+    int* userMine = new int[rows * cols];
+    for (int i = 0; i < rows * cols; ++i) userMine[i] = 0;
+
+    char titleBuf[128];
+    snprintf(titleBuf, sizeof(titleBuf), "扫雷 : %dx%d , 雷数 : %d , 剩余 : ", rows, cols, mineCount);
+
+    ProcessGameLoop(userMine, Mine_lines, titleBuf, mineCount);
+    for (long i = 0; i < nlines; ++i) delete[] Mine_lines[i];
+    delete[] Mine_lines;
+    delete[] userMine;
+    return;
 }
