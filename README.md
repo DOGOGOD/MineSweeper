@@ -17,6 +17,8 @@
 * **困难模式：** 9x16 网格，20 个雷。
 * **专家模式：** 12x30 网格，80 个雷。
 
+* **自定义模式：** 按 `X` 进入自定义模式，允许玩家指定行数、列数与地雷总数以创建任意难度。
+
 
 * **高级机制：**
 * **自动展开：** 点击空白区域会自动递归清除周围无雷区域（Flood fill）。
@@ -83,6 +85,8 @@ A classic Minesweeper game implementation running entirely in the Windows Consol
 * **Simple:** 6x6 Grid, 6 Mines.
 * **Hard:** 9x16 Grid, 20 Mines.
 * **Expert:** 12x30 Grid, 80 Mines.
+
+* **Custom:** Press `X` in the menu to enter a custom mode where the player can set rows, columns and total mines.
 
 
 * **Advanced Mechanics:**
