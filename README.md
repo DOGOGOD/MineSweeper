@@ -39,6 +39,23 @@
 | **菜单选择** | **键盘 1-3** | 在主菜单选择难度。 |
 | **退出** | **键盘 Q** | 在菜单界面退出游戏。 |
 
+### 📁 项目结构
+
+```
+MineSweeper/
+├── include/                # 头文件目录
+│   ├── cgt.h              # CGT 库接口声明（跨平台控制台图形工具）
+│   └── game.h             # 游戏核心逻辑接口声明
+├── src/                    # 源文件目录
+│   ├── cgt_windows.cpp    # CGT Windows 平台实现
+│   ├── cgt_apple.cpp      # CGT macOS 平台实现
+│   ├── cgt_linux.cpp      # CGT Linux 平台实现
+│   └── game.cpp           # 游戏核心逻辑实现
+├── main.cpp               # 程序入口
+├── Makefile               # 编译配置文件
+└── README.md              # 项目说明文档
+```
+
 ### 🛠️ 编译与运行
 
 **前置要求：**
@@ -63,10 +80,8 @@ make
 
 为了进一步提升游戏体验和代码质量，计划在后续版本中实现以下功能：
 
-* [ ] **代码优化与重构**：优化现有逻辑，减少冗余代码，提升执行效率。
-* [ ] **引入现代 C++ 特性**：应用类 (Classes) 封装、智能指针 (Smart Pointers) 管理内存以及模板 (Templates) 等特性，提高代码的可维护性。
-* [ ] **首点击保护机制**：实现玩家第一次点击时百分之百不是地雷。
-* [ ] **首点击开阔区保护**：实现玩家第一次点击时，不仅该点不是雷，且周围 8 格也均无地雷（确保开局即有一个空白区域）。
+* [x] **首点击保护机制**：实现玩家第一次点击时百分之百不是地雷。
+* [x] **首点击开阔区保护**：实现玩家第一次点击时，不仅该点不是雷，且周围 8 格也均无地雷（确保开局即有一个空白区域）。
 * [x] **自定义难度设置**：允许用户根据个人喜好自定义网格大小（行与列）及地雷总数。
 * [x] **Linux 支持**：移植到 Linux 平台，实现跨平台兼容。
 * [x] **计时器功能**：实时记录游戏耗时，增加挑战性。
@@ -108,6 +123,23 @@ The game relies on mouse interaction. Ensure your console window is active.
 | **Menu Selection** | **Keyboard 1-3** | Select difficulty in the main menu. |
 | **Quit** | **Keyboard Q** | Exit the game from the menu or during gameplay (if programmed). |
 
+### 📁 Project Structure
+
+```
+MineSweeper/
+├── include/                # Header files
+│   ├── cgt.h              # CGT library interface (cross-platform console graphic tools)
+│   └── game.h             # Game core logic interface
+├── src/                    # Source files
+│   ├── cgt_windows.cpp    # CGT Windows platform implementation
+│   ├── cgt_apple.cpp      # CGT macOS platform implementation
+│   ├── cgt_linux.cpp      # CGT Linux platform implementation
+│   └── game.cpp           # Game core logic implementation
+├── main.cpp               # Program entry point
+├── Makefile               # Build configuration
+└── README.md              # Project documentation
+```
+
 ### 🛠️ Compilation & Running
 
 **Prerequisites:**
@@ -131,23 +163,13 @@ The Makefile will automatically read the compilation instructions and generate a
 
 To further enhance the gaming experience and code quality, the following features are planned for future releases:
 
-* [ ] **Code Optimization & Refactoring**: Streamline existing logic, reduce redundant code, and improve execution efficiency.
-* [ ] **Incorporate Modern C++ Features**: Apply Class encapsulation, Smart Pointers for memory management, and Templates to improve code maintainability.
-* [ ] **First-Click Protection**: Ensure that the user's first click is guaranteed not to be a mine.
-* [ ] **First-Click Safe Zone**: Guarantee that the first click and its 8 surrounding neighbors are all mine-free, ensuring an open starting area.
+* [x] **First-Click Protection**: Ensure that the user's first click is guaranteed not to be a mine.
+* [x] **First-Click Safe Zone**: Guarantee that the first click and its 8 surrounding neighbors are all mine-free, ensuring an open starting area.
 * [x] **Custom Difficulty**: Allow users to customize the grid size (rows and columns) and the total number of mines according to their preference.
 * [x] **Linux Support**: Port the game to Linux, ensuring cross-platform compatibility.
 * [x] **Timer Function**: Real-time recording of game duration to add a competitive element. 
 
 ---
-
-### 📂 File Structure (文件结构)
-
-* `main.cpp`: Entry point, handles the main menu loop. (程序入口，处理主菜单循环)
-* `game.cpp`: Contains core game logic (Mines generation, Win/Loss check, Rendering board). (核心游戏逻辑，包括生成雷、胜负判定、绘制棋盘)
-* `cgt_windows.cpp`/ `cgt_apple.cpp`: Implementation of the Console Graphic Tools for Windows API. (Windows 控制台底层绘图与输入实现)
-* `cgt.h` (Implied): Header for the graphics tool. (图形工具头文件)
-* `game.h` (Implied): Header for game logic. (游戏逻辑头文件)
 
 ### 📜 Author & Credits
 

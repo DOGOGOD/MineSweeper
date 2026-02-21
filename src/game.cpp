@@ -1,4 +1,5 @@
 #include "cgt.h"
+#include "game.h"
 #include <iostream>
 #include <cstdlib>
 #include <ctime>
@@ -383,6 +384,8 @@ void ProcessGameLoop(int* userMine, char** Mine_lines, const char* titleStr, int
     //记录游戏开始的时间戳
     time_t startTime = time(nullptr);
 
+    bool FirstClick = SafeZone;
+
     while (true) {
         cgt_gotoxy(0, 0);
         cgt_print_str(titleStr, 1, 1, COLOR_WHITE, COLOR_BLACK);
@@ -425,11 +428,25 @@ void ProcessGameLoop(int* userMine, char** Mine_lines, const char* titleStr, int
             }
         }
 
+        int r = (y-5)/3;
+        int c = (x-5)/4;
+
         if (event == MOUSE_CLICK) {
+
+            if (FirstClick){
+                while (Mine_lines[(y - 3)][(x - 3)] == '*' && mine[r][c] != 0){
+                    for (int i = 0; i < rows; i++) {
+                        delete[] mine[i];
+                    }
+                    delete[] mine;
+                    mine = NULL;
+                    initializeGame();
+                }
+                FirstClick = false;
+            }
+
             if (button == MOUSE_BUTTON_LEFT) {
                 if (Mine_lines[(y - 3)][(x - 3)] == '*') {
-                    int r = (y-5)/3;
-                    int c = (x-5)/4;
                     // 踩雷判断
                     if (mine[r][c] == '*'){
                         cgt_print_char('*', x, y, COLOR_BLACK, COLOR_MAGENTA);
@@ -449,8 +466,7 @@ void ProcessGameLoop(int* userMine, char** Mine_lines, const char* titleStr, int
                 }
             } else if (button == MOUSE_BUTTON_RIGHT) {
                 if (Mine_lines[(y - 3)][(x - 3)] == '*') {
-                    int r = (y-5)/3;
-                    int c = (x-5)/4;
+                    
                     int idx = r * cols + c; // 一维数组索引
 
                     // 插旗逻辑
