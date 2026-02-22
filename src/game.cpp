@@ -1,5 +1,4 @@
 #include "cgt.h"
-#include "game.h"
 #include <iostream>
 #include <cstdlib>
 #include <ctime>
@@ -56,39 +55,82 @@ void updateAdjacentCount(int row, int col, int rows, int cols, int** mines) {
     mines[row][col] = count;
 }
 
-void generateMines(int rows, int cols, const int mineCount, int** mine) {
-    for (int r = 0; r < rows; r++) {
-        for (int c = 0; c < cols; c++) {
-            mine[r][c] = 0;
-        }
-    }
-
+void generateMines(int r, int c, int rows, int cols, const int mineCount, int** mine, bool SafeZone) {
     int generated = 0;
-    while (generated < mineCount) {
-        int mineIdx = randomInt(0, rows * cols - 1 - generated);
-
-        int count = 0;
-        for (int r = 0; r < rows; r++) {
-            for (int c = 0; c < cols; c++) {
-                if (isMine(mine[r][c]))
-                    continue;
-
-                if (count == mineIdx) {
-                    mine[r][c] = '*';
-                    generated++;
-                    count++;
-                    break;
-                }
-                else {
-                    count++;
+    
+    // 计算理想状态下，3x3 安全区内的格子数量
+    int x = 0;
+    if (SafeZone) {
+        for (int dr = -1; dr <= 1; dr++) {
+            for (int dc = -1; dc <= 1; dc++) {
+                int nr = r + dr;
+                int nc = c + dc;
+                if (nr >= 0 && nr < rows && nc >= 0 && nc < cols) {
+                    x++;
                 }
             }
         }
     }
 
-    for (int r = 0; r < rows; r++) {
-        for (int c = 0; c < cols; c++) {
-            updateAdjacentCount(r, c, rows, cols, mine);
+    // 判断当前雷数允许哪种级别的保护
+    bool protect3x3 = false;
+    bool protect1x1 = false;
+    int protectedCells = 0;
+
+    if (SafeZone) {
+        if (mineCount <= rows * cols - x) {
+            // 空间充足，开启完整的 3x3 保护
+            protectedCells = x;
+            protect3x3 = true;
+        } else if (mineCount < rows * cols) {
+            // 空间不足以保护 3x3，降级为只保护玩家点击的这 1 个格子
+            protectedCells = 1;
+            protect1x1 = true;
+        }
+    }
+
+    // 开始布雷
+    while (generated < mineCount) {
+        // 计算当前还有多少个“合法且空闲”的格子可以放雷
+        int availableSpaces = rows * cols - protectedCells - generated;
+        if (availableSpaces <= 0) break; // 安全熔断
+
+        int mineIdx = randomInt(0, availableSpaces - 1);
+        int count = 0;
+        bool placed = false; 
+        
+        for (int i = 0; i < rows && !placed; i++) {
+            for (int j = 0; j < cols && !placed; j++) {
+                // 如果该位置已经有雷，跳过
+                if (isMine(mine[i][j])) continue;
+
+                // 检查该格子是否处于被保护的状态
+                bool isProtected = false;
+                if (protect3x3 && abs(i - r) <= 1 && abs(j - c) <= 1) {
+                    isProtected = true;
+                } else if (protect1x1 && i == r && j == c) {
+                    isProtected = true;
+                }
+
+                // 如果被保护，跳过
+                if (isProtected) continue;
+
+                // 找到第 mineIdx 个可用空格
+                if (count == mineIdx) {
+                    mine[i][j] = '*';
+                    generated++;
+                    placed = true; 
+                } else {
+                    count++; 
+                }
+            }
+        }
+    }
+
+    // 新所有格子的周围雷数
+    for (int i = 0; i < rows; i++) {
+        for (int j = 0; j < cols; j++) {
+            updateAdjacentCount(i, j, rows, cols, mine);
         }
     }
 }
@@ -98,17 +140,29 @@ void generateMines(int rows, int cols, const int mineCount, int** mine) {
 extern int rows;
 extern int cols;
 extern int mineCount;
+extern bool SafeZone;
 int** mine = NULL;
 
-void initializeGame() {
+void initializeGame(int r, int c, bool FirstClick) {
     mine = new int*[rows];
     if (!mine) exit(1);  
 
-    for (int r = 0; r < rows; r++) {
-        mine[r] = new int[cols];
-        if (!mine[r]) exit(1);
+    for (int i = 0; i < rows; i++) {
+        mine[i] = new int[cols];
+        if (!mine[i]) exit(1);
     }
-    generateMines(rows, cols, mineCount, mine);
+
+    for (int i = 0; i < rows; i++) {
+        for (int j = 0; j < cols; j++) {
+            mine[i][j] = 0;
+        }
+    }
+
+    if (FirstClick) {
+        generateMines(r, c, rows, cols, mineCount, mine, SafeZone);
+    }else{
+        generateMines(-1, -1, rows, cols, mineCount, mine, false);
+    }
 }
 
 void cleanupGame() {
@@ -383,8 +437,7 @@ void ProcessGameLoop(int* userMine, char** Mine_lines, const char* titleStr, int
 
     //记录游戏开始的时间戳
     time_t startTime = time(nullptr);
-
-    bool FirstClick = SafeZone;
+    bool FirstClick = true;
 
     while (true) {
         cgt_gotoxy(0, 0);
@@ -432,19 +485,12 @@ void ProcessGameLoop(int* userMine, char** Mine_lines, const char* titleStr, int
         int c = (x-5)/4;
 
         if (event == MOUSE_CLICK) {
-
-            if (FirstClick){
-                while (Mine_lines[(y - 3)][(x - 3)] == '*' && mine[r][c] != 0){
-                    for (int i = 0; i < rows; i++) {
-                        delete[] mine[i];
-                    }
-                    delete[] mine;
-                    mine = NULL;
-                    initializeGame();
+            if (Mine_lines[(y - 3)][(x - 3)] == '*'){
+                if (FirstClick) {
+                    initializeGame(r, c, FirstClick);
+                    FirstClick = false;
                 }
-                FirstClick = false;
             }
-
             if (button == MOUSE_BUTTON_LEFT) {
                 if (Mine_lines[(y - 3)][(x - 3)] == '*') {
                     // 踩雷判断
@@ -528,7 +574,7 @@ void ProcessGameLoop(int* userMine, char** Mine_lines, const char* titleStr, int
 // ================= 主入口函数 =================
 
 void Game() {
-    initializeGame();
+    initializeGame(0, 0, false);
     cgt_clear_screen();
     
     char** Mine_lines = CreateMineLines(rows, cols);

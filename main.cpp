@@ -4,6 +4,7 @@
 using namespace std;
 #include <string>
 #include <climits>
+#include <limits>
 
 static char ch = '\0';
 int rows, cols, mineCount;
@@ -70,9 +71,9 @@ void wait_input() {
             if (ch == 'y' || ch == 'Y'){
                 SafeZone = !SafeZone;
                 if (SafeZone){
-                    cgt_print_str("ON ", 55, 12, COLOR_GREEN);
+                    cgt_print_str("ON ", 50, 12, COLOR_GREEN);
                 }else{
-                    cgt_print_str("OFF", 55, 12, COLOR_GREEN);
+                    cgt_print_str("OFF", 50, 12, COLOR_GREEN);
                 }
             }else if (ch == '1'){  
                 rows = 6;
@@ -131,7 +132,12 @@ void print_menu() {
         cgt_print_str("按 2 进入困难模式", 10, 8, COLOR_LIGHT_BLUE);
         cgt_print_str("按 3 进入专家模式", 10, 9, COLOR_LIGHT_BLUE);
         cgt_print_str("按 X 进入自定义模式", 10, 10, COLOR_LIGHT_BLUE);
-        cgt_print_str("首点击开阔区保护设置（默认关闭，按 Y 开启）: OFF", 10, 12, COLOR_GREEN);
+        cgt_print_str("首点击开阔区保护设置（按 Y 开启/关闭）: ", 10, 12, COLOR_GREEN);
+        if (SafeZone){
+            cgt_print_str("ON ", 50, 12, COLOR_GREEN);
+        }else{
+            cgt_print_str("OFF", 50, 12, COLOR_GREEN);
+        }
         cgt_print_str("按 Q 退出游戏", 10, 14, COLOR_RED);
         wait_input();
         if (ch == 'q' || ch == 'Q'){
