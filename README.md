@@ -46,6 +46,9 @@ MineSweeper/
 ├── include/                # 头文件目录
 │   ├── cgt.h              # CGT 库接口声明（跨平台控制台图形工具）
 │   └── game.h             # 游戏核心逻辑接口声明
+├── resources/              # 资源文件目录
+│   ├── Bomb.mp3           # 踩雷音效
+|   └── Victory.mp3        # 扫雷成功音效
 ├── src/                    # 源文件目录
 │   ├── cgt_windows.cpp    # CGT Windows 平台实现
 │   ├── cgt_apple.cpp      # CGT macOS 平台实现
@@ -85,7 +88,7 @@ make
 * [x] **自定义难度设置**：允许用户根据个人喜好自定义网格大小（行与列）及地雷总数。
 * [x] **Linux 支持**：移植到 Linux 平台，实现跨平台兼容。
 * [x] **计时器功能**：实时记录游戏耗时，增加挑战性。
-
+* [x] **音效功能**： 增加踩雷或扫雷成功时的音效
 ---
 
 ## English Description
@@ -130,6 +133,9 @@ MineSweeper/
 ├── include/                # Header files
 │   ├── cgt.h              # CGT library interface (cross-platform console graphic tools)
 │   └── game.h             # Game core logic interface
+├── resources/              # Resource files
+|   ├── Bomb.mp3           # Bomb sound effect
+|   └── Victory.mp3        # Victory sound effect
 ├── src/                    # Source files
 │   ├── cgt_windows.cpp    # CGT Windows platform implementation
 │   ├── cgt_apple.cpp      # CGT macOS platform implementation
@@ -168,6 +174,7 @@ To further enhance the gaming experience and code quality, the following feature
 * [x] **Custom Difficulty**: Allow users to customize the grid size (rows and columns) and the total number of mines according to their preference.
 * [x] **Linux Support**: Port the game to Linux, ensuring cross-platform compatibility.
 * [x] **Timer Function**: Real-time recording of game duration to add a competitive element. 
+* [x] **Sound Effects**: Add sound effects for when the player explodes or wins.
 
 ---
 

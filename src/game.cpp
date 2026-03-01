@@ -2,9 +2,46 @@
 #include <iostream>
 #include <cstdlib>
 #include <ctime>
+#include "stdlib.h"
+
+// 使用预处理宏，跨平台兼容播放音频所需库和头文件
+#ifdef _WIN32
+  #include <windows.h>
+    #if defined(_MSC_VER)
+        #pragma comment(lib, "winmm.lib")
+    #endif
+#elif __APPLE__
+  // 暂不需要为 system("afplay ...") 引入特殊头文件，使用 stdlib.h 即可
+#elif __linux__
+  // 暂不需要为 system("aplay ... / mpg123 ...") 引入特殊头文件，使用 stdlib.h 即可
+#endif
+
 using namespace std;
 
 // ================= 全局变量与基础辅助函数 =================
+
+void play_bomb_sound() {
+#ifdef _WIN32
+    mciSendStringA("close resources/Bomb.mp3", NULL, 0, NULL);
+    mciSendStringA("play resources/Bomb.mp3", NULL, 0, NULL);
+#elif __APPLE__
+    system("afplay resources/Bomb.mp3 &");
+#elif __linux__
+    // 使用 mpg123 在后台播放，确保系统已安装 mpg123 或者修改为其他播放器
+    system("mpg123 -q resources/Bomb.mp3 &");
+#endif
+}
+
+void play_victory_sound() {
+#ifdef _WIN32
+    mciSendStringA("close resources/Victory.mp3", NULL, 0, NULL);
+    mciSendStringA("play resources/Victory.mp3", NULL, 0, NULL);
+#elif __APPLE__
+    system("afplay resources/Victory.mp3 &");
+#elif __linux__
+    system("mpg123 -q resources/Victory.mp3 &");
+#endif
+}
 
 void wait_for_enter() {
     // 清空键盘输入事件缓冲。
@@ -277,6 +314,7 @@ bool TryChord(int x, int y, int* userMine) {
                     int sy = 5 + nr * 3;
 
                     if (mine[nr][nc] == '*') {
+                        play_bomb_sound();
                         cgt_print_char('*', sx, sy, COLOR_BLACK, COLOR_MAGENTA);
                         cgt_print_char(' ', sx-1, sy, COLOR_MAGENTA, COLOR_MAGENTA);
                         cgt_print_char(' ', sx+1, sy, COLOR_MAGENTA, COLOR_MAGENTA);
@@ -495,6 +533,7 @@ void ProcessGameLoop(int* userMine, char** Mine_lines, const char* titleStr, int
                 if (Mine_lines[(y - 3)][(x - 3)] == '*') {
                     // 踩雷判断
                     if (mine[r][c] == '*'){
+                        play_bomb_sound();
                         cgt_print_char('*', x, y, COLOR_BLACK, COLOR_MAGENTA);
                         cgt_print_char(' ', x-1, y, COLOR_MAGENTA, COLOR_MAGENTA);
                         cgt_print_char(' ', x+1, y, COLOR_MAGENTA, COLOR_MAGENTA);
@@ -558,7 +597,8 @@ void ProcessGameLoop(int* userMine, char** Mine_lines, const char* titleStr, int
         }
 
         if (flag == winTarget){
-            //胜利时显示最终用时
+            play_victory_sound();
+            //胜利时显示最终用时 
             int finalTime = (int)(time(nullptr) - startTime);
             cgt_print_str("游戏结束！你成功清除所有雷！最终用时: ", 1, 2, COLOR_GREEN, COLOR_BLACK);
             cgt_print_int(finalTime, -1, -1, COLOR_LIGHT_CYAN, COLOR_BLACK);
